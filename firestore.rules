@@ -1,0 +1,25 @@
+rules_version = '2';
+
+service cloud.firestore {
+  // The first bot slice has no browser dashboard. All data access is performed
+  // by the server with the Firebase Admin SDK, which bypasses client rules.
+  match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function validString(value, maxLength) {
+      return value is string && value.size() <= maxLength;
+    }
+
+    // Keep all browser/client access closed until a Firebase-authenticated
+    // dashboard is added and its exact ownership model is reviewed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
