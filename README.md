@@ -22,6 +22,8 @@ The first slice of the personal agent is WhatsApp-first. It keeps reminders, tod
 5. Deploy this folder as its own Vercel project and set the same variables in Vercel. Keep `FIREBASE_PRIVATE_KEY` server-only.
 6. In Meta, use `https://YOUR_DOMAIN/api/webhooks/whatsapp` as the webhook URL and use the verify token from `WHATSAPP_VERIFY_TOKEN`.
 
+Vercel registers the daily reminder route from `vercel.json` on production deployments. The schedule is `14:00 UTC`, which is 22:00 in China. Vercel Hobby cron jobs can run once per day but may be invoked at any point within that hour, so this is suitable for the nightly check-in rather than precise minute-level reminders. Precise reminders such as “in 10 minutes” need a more frequent scheduler or a Vercel Pro plan.
+
 ## Important delivery boundary
 
 The reminder delivery route exists at `/api/cron/reminders`, but proactive sending stays disabled until Meta credentials, WhatsApp conversation-window/template rules, and billing behavior are verified. Set `ENABLE_PROACTIVE_MESSAGES=true` only after that review. The first slice is intentionally focused on reliable inbound interaction and persistent data.
